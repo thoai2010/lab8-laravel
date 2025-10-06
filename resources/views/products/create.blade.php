@@ -15,7 +15,7 @@
 </div>
 @endif
 
-<form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('products.store') }}" method="POST">
   @csrf
   <div class="mb-3">
     <label>Tên sản phẩm</label>
@@ -37,10 +37,6 @@
         <option value="{{ $c->id }}">{{ $c->name }}</option>
       @endforeach
     </select>
-  </div>
-  <div class="mb-3">
-    <label>Ảnh sản phẩm</label>
-    <input type="file" name="image" class="form-control">
   </div>
   <button type="submit" class="btn btn-success">Lưu</button>
   <a href="{{ route('products.index') }}" class="btn btn-secondary">Hủy</a>
