@@ -1,39 +1,66 @@
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Laravel Lab 8')</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <title>{{ config('app.name', 'Lab9 Project') }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    {{-- Thanh menu --}}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Trang chủ</a>
-            <div>
-                <a class="nav-link d-inline text-light" href="{{ route('products.index') }}">Products</a>
-                <a class="nav-link d-inline text-light" href="{{ url('/students') }}">Students</a>
-                <a class="nav-link d-inline text-light" href="{{ route('profiles.index') }}">Profiles</a>
-            </div>
-        </div>
-    </nav>
+<body class="bg-light">
 
-    {{-- Nội dung trang --}}
-    <div class="container mt-4">
-        @yield('content')
+{{-- Thanh điều hướng --}}
+@include('layouts.navigation')
+
+<div class="container py-4">
+  <a class="navbar-brand" href="{{ url('/') }}">Lab9</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto">
+        @auth
+          <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Sản phẩm</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('students.index') }}">Sinh viên</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('profiles.index') }}">Hồ sơ</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('articles.index') }}">Bài viết</a></li>
+        @endauth
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        @guest
+          <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Đăng nhập</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Đăng ký</a></li>
+        @endguest
+
+        @auth
+          <li class="nav-item">
+            <span class="navbar-text text-white me-3">
+              Xin chào, <strong>{{ Auth::user()->name }}</strong>
+              ({{ Auth::user()->role }})
+            </span>
+          </li>
+
+          @if(Auth::user()->role === 'admin')
+            <li class="nav-item"><a class="nav-link text-warning" href="{{ url('/admin/articles') }}">Khu quản trị</a></li>
+          @endif
+
+          <li class="nav-item">
+            <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit" class="btn btn-sm btn-outline-light">Đăng xuất</button>
+            </form>
+          </li>
+        @endauth
+      </ul>
     </div>
+  @yield('content')
+</div>
 
-    {{-- Footer --}}
-    <footer class="text-center mt-4 py-3 text-muted border-top">
-        © HUIT – Khoa CNTT. Laravel 12 Lab.
-    </footer>
-
-    <style>
-        nav[role="navigation"] {
-            display: flex;
-            justify-content: center;
-        }
-    </style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

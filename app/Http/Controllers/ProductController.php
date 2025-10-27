@@ -9,10 +9,39 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     // Hiển thị danh sách
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->paginate(10);
-        return view('products.index', compact('products'));
+        $query = \App\Models\Product::query();
+
+        // 🔍 Tìm kiếm
+        if ($request->filled('keyword')) {
+            $query->where('name', 'like', '%' . $request->keyword . '%');
+        }
+
+        // 🔽 Lọc theo danh mục
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // ⚙️ Sắp xếp
+        $sort = $request->get('sort', 'name'); // mặc định sắp theo tên
+        $direction = $request->get('direction', 'asc'); // mặc định tăng dần
+
+        if (!in_array($sort, ['name', 'price', 'stock'])) {
+            $sort = 'name';
+        }
+
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        $products = $query->orderBy($sort, $direction)
+                        ->paginate(10)
+                        ->withQueryString();
+
+        $categories = \App\Models\Category::all();
+
+        return view('products.index', compact('products', 'categories', 'sort', 'direction'));
     }
 
     // Form thêm mới
